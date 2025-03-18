@@ -26,13 +26,18 @@ pip install --editable .
 ## **🛠 Usage**  
 ### **Basic Command**
 ```sh
-sswitch <HOSTNAME> <NEW_IP>
+sswitch update <HOSTNAME> <NEW_IP>
 ```
 For example:  
 ```sh
-sswitch myserver 192.168.1.100
+sswitch update myserver 192.168.1.100
 ```
 This will find `myserver` in `~/.ssh/config` and update its `HostName`.
+
+You can also list the current hostnames and IPs as:
+```sh
+sswitch list
+```
 
 ---
 
