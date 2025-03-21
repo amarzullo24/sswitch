@@ -9,18 +9,25 @@
 ---
 
 ## **📌 Installation**  
-### **Using `pip` (Recommended)**
+<!--### **Using `pip` (Recommended)**
 ```sh
 pip install sswitch
-```
+```-->
 
 ### **From Source**
 ```sh
-git clone https://github.com/yourusername/sswitch.git
+git clone https://github.com/amarzullo24/sswitch.git
 cd sswitch
 pip install --editable .
 ```
 
+## **⚙ Custom SSH Config Path**  
+Set the default **SSH config file** path and your default username in the configuration file. 
+```
+[settings]
+ssh_config = /custom/path/to/ssh_config
+user = my_username
+```
 ---
 
 ## **🛠 Usage**  
@@ -40,20 +47,10 @@ sswitch list
 ```
 You can also add a new hostname as:
 ```sh
-sswitch add new_hostname
+sswitch add <NEW_HOSTNAME>
 ```
 By default the address of the new host is 1.1.1.1
 Use sswitch uodate `new_hostname new_ip` to change it.
-
----
-
-## **⚙ Custom SSH Config Path**  
-By default, `sswitch` edits `~/.ssh/config`.  
-To use a **custom SSH config file**, create `~/.sswitch_config`:
-```
-[settings]
-ssh_config = /custom/path/to/ssh_config
-```
 
 ---
 
