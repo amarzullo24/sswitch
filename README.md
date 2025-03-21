@@ -38,6 +38,12 @@ You can also list the current hostnames and IPs as:
 ```sh
 sswitch list
 ```
+You can also add a new hostname as:
+```sh
+sswitch add new_hostname
+```
+By default the address of the new host is 1.1.1.1
+Use sswitch uodate `new_hostname new_ip` to change it.
 
 ---
 
