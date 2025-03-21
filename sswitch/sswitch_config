@@ -1,2 +1,3 @@
 [settings]
-ssh_config = ~/.ssh/config
+ssh_config = C:/Users/amarzullo/.ssh/config
+user = aldo_marzullo

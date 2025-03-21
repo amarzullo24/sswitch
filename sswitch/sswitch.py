@@ -7,7 +7,8 @@ import argparse
 
 # Default paths
 DEFAULT_SSH_CONFIG = os.path.expanduser("~/.ssh/config")
-CONFIG_FILE = os.path.expanduser("sswitch_config")
+CONFIG_FILE = os.path.expanduser("sswitch/sswitch_config")
+SSH_DIR = os.path.expanduser("~/.ssh/")
 
 def get_ssh_config_path():
     """Retrieve the SSH config file location from the user's config file."""
@@ -16,6 +17,14 @@ def get_ssh_config_path():
         config.read(CONFIG_FILE)
         return config.get("settings", "ssh_config", fallback=DEFAULT_SSH_CONFIG)
     return DEFAULT_SSH_CONFIG
+
+def get_ssh_user():
+    """Retrieve the user from sswitch_config."""
+    if os.path.isfile(CONFIG_FILE):
+        config = configparser.ConfigParser()
+        config.read(CONFIG_FILE)
+        return config.get("settings", "user", fallback="default_user")
+    return "default_user"
 
 def list_hostname(config_file):
     """List all HostNames from the SSH config file."""
@@ -83,6 +92,34 @@ def update_hostname(config_file, host, new_ip):
     print(f"Successfully updated HostName for '{host}' to '{new_ip}' in {config_file}")
     return True
 
+def add_host(config_file, new_name):
+    """Add a new SSH host entry to the config file."""
+    identity_file = os.path.join(SSH_DIR, "google_compute_engine")
+    known_hosts_file = os.path.join(SSH_DIR, "google_compute_known_hosts")
+    user = get_ssh_user()
+
+    new_entry = f"""
+Host {new_name}
+    HostName 1.1.1.1
+    IdentityFile {identity_file}
+    UserKnownHostsFile={known_hosts_file}
+    IdentitiesOnly=yes
+    CheckHostIP=no
+    User {user}
+"""
+
+    # Check if the host already exists
+    with open(config_file, "r") as f:
+        if any(re.match(rf'^\s*Host\s+{re.escape(new_name)}\s*$', line) for line in f):
+            print(f"Error: Host '{new_name}' already exists in {config_file}!")
+            return False
+
+    with open(config_file, "a") as f:
+        f.write(new_entry)
+
+    print(f"Successfully added new host '{new_name}' to {config_file}")
+    return True
+
 def main():
     """Main function to handle command-line arguments using argparse."""
     parser = argparse.ArgumentParser(description="Manage SSH HostName entries in the SSH config file.")
@@ -96,6 +133,10 @@ def main():
     update_parser.add_argument("host", help="The SSH host to update")
     update_parser.add_argument("new_ip", help="The new IP address or hostname to set")
 
+    # Add hostname command
+    add_parser = subparsers.add_parser("add", help="Add a new SSH host entry")
+    add_parser.add_argument("new_name", help="The new SSH host name to add")
+
     args = parser.parse_args()
     config_file = get_ssh_config_path()
 
@@ -103,6 +144,8 @@ def main():
         list_hostname(config_file)
     elif args.command == "update":
         update_hostname(config_file, args.host, args.new_ip)
+    elif args.command == "add":
+        add_host(config_file, args.new_name)
     else:
         parser.print_help()
         sys.exit(1)
